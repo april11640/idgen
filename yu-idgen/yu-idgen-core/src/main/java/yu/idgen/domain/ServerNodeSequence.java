@@ -5,6 +5,8 @@ package yu.idgen.domain;
  */
 public class ServerNodeSequence {
 
+    public final static String EMPTY_NODE_VALUE = "-";
+
     private Integer id;
     private String node;
 

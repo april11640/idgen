@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="yu.idgen.dao.api.ServerNodeSequenceDao">
+
+    <insert id="saveAllServerNodeSequence">
+		INSERT INTO server_node_seq(
+            id,
+            node
+        )
+        VALUES
+        <foreach collection="collection" item="item" open="(" close=")" separator="),(">
+            #{item.id},
+	        #{item.node}
+        </foreach>
+	</insert>
+
+    <update id="updateEmptyServerNodeSequence">
+        UPDATE server_node_seq SET
+            node = #{param3}
+        WHERE
+            id = #{param1}
+            AND node = #{param2}
+    </update>
+
+    <select id="getServerNodeSequence" resultType="yu.idgen.domain.po.ServerNodeSequencePO">
+        SELECT
+            id,
+            node
+        FROM server_node_seq
+        WHERE
+            node = #{param1}
+        LIMIT 1
+    </select>
+
+    <select id="listServerNodeSequence" resultType="yu.idgen.domain.po.ServerNodeSequencePO">
+        SELECT
+            id,
+            node
+        FROM server_node_seq
+    </select>
+
+    <select id="listEmptyServerNodeSequence" resultType="yu.idgen.domain.po.ServerNodeSequencePO">
+        SELECT
+            id,
+            node
+        FROM server_node_seq
+        WHERE
+            node = #{param1}
+        ORDER BY id
+        LIMIT #{param2}
+    </select>
+
+</mapper>
+

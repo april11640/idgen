@@ -14,11 +14,6 @@
     <dependencies>
         <dependency>
             <groupId>yu.idgen</groupId>
-            <artifactId>yu-idgen-core</artifactId>
-            <version>${reversion}</version>
-        </dependency>
-        <dependency>
-            <groupId>yu.idgen</groupId>
             <artifactId>yu-idgen-mybatis</artifactId>
             <version>${reversion}</version>
         </dependency>

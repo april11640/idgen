@@ -11,5 +11,12 @@
 
     <artifactId>yu-idgen-mybatis</artifactId>
 
+    <dependencies>
+        <dependency>
+            <artifactId>yu-idgen-core</artifactId>
+            <groupId>yu.idgen</groupId>
+            <version>${reversion}</version>
+        </dependency>
+    </dependencies>
 
 </project>
