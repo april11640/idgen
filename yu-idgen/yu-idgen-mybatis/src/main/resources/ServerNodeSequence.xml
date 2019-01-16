@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="yu.idgen.dao.api.ServerNodeSequenceDao">
+
+    <insert id="saveServerNodeSequence" useGeneratedKeys="true" keyProperty="lpnId">
+		INSERT INTO server_node_seq(node)
+	      SELECT #{node} FROM dual WHERE NOT EXISTS
+		    (SELECT node FROM server_node_seq WHERE node = #{node})
+	</insert>
+
+    <select id="getServerNodeSequence" resultType="yu.idgen.domain.po.ServerNodeSequencePO">
+        SELECT
+            id,
+            node
+        FROM server_node_seq
+        WHERE
+            node = #{param1}
+        LIMIT 1
+    </select>
+
+</mapper>
+

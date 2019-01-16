@@ -1,0 +1,46 @@
+server:
+  port: 50001
+
+spring:
+  profiles:
+    active: dev
+  application:
+    name: idgen
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: com.mysql.jdbc.Driver
+    filters: stat
+    maxActive: 20
+    initialSize: 1
+    maxWait: 60000
+    minIdle: 1
+    timeBetweenEvictionRunsMillis: 60000
+    minEvictableIdleTimeMillis: 300000
+    validationQuery: select 'x'
+    testWhileIdle: true
+    testOnBorrow: false
+    testOnReturn: false
+    poolPreparedStatements: true
+    maxOpenPreparedStatements: 20
+    connection-init-sqls: SET NAMES utf8mb4
+
+log4j2:
+  asyncLoggerRingBufferSize: 262144
+  asyncQueueFullPolicy: Discard
+
+mybatis:
+  mapperLocations: classpath*:*Mapper.xml
+
+# springboot2 actuator配置(只开启info,health,restart,pause)
+# 由于pause是restart的子类，需开启restart后才可以开启pause
+management:
+  endpoint:
+    restart:
+       enabled: true
+    pause:
+       enabled: true
+  endpoints:
+    web:
+       exposure:
+         include: "*"
+         #include: ["info","health","shutdown","restart","pause"]

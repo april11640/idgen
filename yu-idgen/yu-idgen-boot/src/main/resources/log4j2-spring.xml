@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration status="warn" monitorInterval="30">
+    <properties>
+        <property name="pattern">%d{yyyy-MM-dd HH:mm:ss:SSS} - %-5level - %X{appName} - %X{ip} - %pid - %t - %c{1.}:%L - %m%n</property>
+    </properties>
+    <appenders>
+        <console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="${pattern}"/>
+        </console>
+        <RollingRandomAccessFile name="RollingFileDebugForAccess" fileName="${sys:user.home}/logs/yhdx/debug-scm-base-access.log"
+                                                           filePattern="${sys:user.home}/logs/yhdx/$${date:yyyy-MM}/debug-scm-base-access-%d{yyyy-MM-dd}-%i.log">
+            <Filters>
+                <ThresholdFilter level="DEBUG" onMatch="ACCEPT" onMismatch="DENY"/>
+                <ThresholdFilter level="INFO" onMatch="DENY" onMismatch="NEUTRAL"/>
+            </Filters>
+            <PatternLayout pattern="${pattern}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="100 MB"/>
+            </Policies>
+        </RollingRandomAccessFile>
+        <RollingRandomAccessFile name="RollingFileDebugForSql" fileName="${sys:user.home}/logs/yhdx/debug-scm-base-sql.log"
+                                 filePattern="${sys:user.home}/logs/yhdx/$${date:yyyy-MM}/debug-scm-base-sql-%d{yyyy-MM-dd}-%i.log">
+            <Filters>
+                <ThresholdFilter level="DEBUG" onMatch="ACCEPT" onMismatch="DENY"/>
+                <ThresholdFilter level="INFO" onMatch="DENY" onMismatch="NEUTRAL"/>
+            </Filters>
+            <PatternLayout pattern="${pattern}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="100 MB"/>
+            </Policies>
+        </RollingRandomAccessFile>
+        <RollingRandomAccessFile name="RollingFileDebugForRedis" fileName="${sys:user.home}/logs/yhdx/debug-scm-base-redis.log"
+                                 filePattern="${sys:user.home}/logs/yhdx/$${date:yyyy-MM}/debug-scm-base-redis-%d{yyyy-MM-dd}-%i.log">
+            <Filters>
+                <ThresholdFilter level="DEBUG" onMatch="ACCEPT" onMismatch="DENY"/>
+                <ThresholdFilter level="INFO" onMatch="DENY" onMismatch="NEUTRAL"/>
+            </Filters>
+            <PatternLayout pattern="${pattern}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="100 MB"/>
+            </Policies>
+        </RollingRandomAccessFile>
+        <RollingRandomAccessFile name="RollingFileInfo" fileName="${sys:user.home}/logs/yhdx/info-scm-base.log"
+                     filePattern="${sys:user.home}/logs/yhdx/$${date:yyyy-MM}/info-scm-base-%d{yyyy-MM-dd}-%i.log">
+            <Filters>
+                <ThresholdFilter level="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
+                <ThresholdFilter level="WARN" onMatch="DENY" onMismatch="NEUTRAL"/>
+            </Filters>
+            <PatternLayout pattern="${pattern}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="100 MB"/>
+            </Policies>
+        </RollingRandomAccessFile>
+        <RollingRandomAccessFile name="RollingFileWarn" fileName="${sys:user.home}/logs/yhdx/warn-scm-base.log"
+                     filePattern="${sys:user.home}/logs/yhdx/$${date:yyyy-MM}/warn-scm-base-%d{yyyy-MM-dd}-%i.log">
+            <Filters>
+                <ThresholdFilter level="WARN" onMatch="ACCEPT" onMismatch="DENY"/>
+                <ThresholdFilter level="ERROR" onMatch="DENY" onMismatch="NEUTRAL"/>
+            </Filters>
+            <PatternLayout pattern="${pattern}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="100 MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="20"/>
+        </RollingRandomAccessFile>
+        <RollingRandomAccessFile name="RollingFileError" fileName="${sys:user.home}/logs/yhdx/error-scm-base.log"
+                     filePattern="${sys:user.home}/logs/yhdx/$${date:yyyy-MM}/error-scm-base-%d{yyyy-MM-dd}-%i.log">
+            <ThresholdFilter level="ERROR"/>
+            <PatternLayout pattern="${pattern}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="100 MB"/>
+            </Policies>
+        </RollingRandomAccessFile>
+    </appenders>
+    <loggers>
+        <AsyncLogger name="org.springframework" level="INFO"/>
+        <AsyncLogger name="com.yhdx.baseframework.tool.op.AccessLogAspect" level="DEBUG" additivity="false">
+            <appender-ref ref="Console"/>
+            <appender-ref ref="RollingFileDebugForAccess"/>
+        </AsyncLogger>
+        <!--<AsyncLogger name="com.yhdx.baseframework.tool.dao.api" level="DEBUG" additivity="false">-->
+            <!--<appender-ref ref="Console"/>-->
+            <!--<appender-ref ref="RollingFileDebugForSql"/>-->
+        <!--</AsyncLogger>-->
+        <!--<AsyncLogger name="com.yhdx.baseservice.base.dao.api" level="DEBUG" additivity="false">-->
+            <!--<appender-ref ref="Console"/>-->
+            <!--<appender-ref ref="RollingFileDebugForSql"/>-->
+        <!--</AsyncLogger>-->
+        <!--<AsyncLogger name="com.yhdx.baseframework.tool.data.redis" level="DEBUG" additivity="false">-->
+            <!--<appender-ref ref="Console"/>-->
+            <!--<appender-ref ref="RollingFileDebugForRedis"/>-->
+        <!--</AsyncLogger>-->
+        <!--<AsyncLogger name="com.yhdx.baseframework.tool.caching" level="DEBUG" additivity="false">-->
+            <!--<appender-ref ref="Console"/>-->
+            <!--<appender-ref ref="RollingFileDebugForRedis"/>-->
+        <!--</AsyncLogger>-->
+        <AsyncRoot level="INFO">
+            <appender-ref ref="Console"/>
+            <appender-ref ref="RollingFileInfo"/>
+            <appender-ref ref="RollingFileWarn"/>
+            <appender-ref ref="RollingFileError"/>
+        </AsyncRoot>
+    </loggers>
+
+</configuration>
