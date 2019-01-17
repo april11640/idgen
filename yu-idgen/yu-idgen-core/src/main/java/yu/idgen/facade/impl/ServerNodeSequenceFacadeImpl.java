@@ -41,7 +41,7 @@ public class ServerNodeSequenceFacadeImpl {
 
     @PostMapping("/server-node/sequence/list")
     public List<ServerNodeSequence> listServerNodeSequence() {
-        return serverNodeSequenceService.listServerNodeSequence();
+        return serverNodeSequenceService.listServerNodeSequence(true, 1024);
     }
 
     @PostMapping("/server-node/sequence/test/get-or-update")

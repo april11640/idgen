@@ -16,7 +16,7 @@ public interface ServerNodeSequenceDao {
 
     ServerNodeSequencePO getServerNodeSequence(String node);
 
-    List<ServerNodeSequencePO> listServerNodeSequence();
+    List<ServerNodeSequencePO> listServerNodeSequence(String emptyNode, int size);
 
     List<ServerNodeSequencePO> listEmptyServerNodeSequence(String emptyNode, int size);
 

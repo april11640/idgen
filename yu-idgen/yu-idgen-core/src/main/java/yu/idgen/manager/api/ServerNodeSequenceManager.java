@@ -12,12 +12,12 @@ public interface ServerNodeSequenceManager {
 
     void saveAllServerNodeSequence(Collection<ServerNodeSequence> serverNodeSequenceCollection);
 
-    int updateEmptyServerNodeSequence(String emptyNodeValue, ServerNodeSequence serverNodeSequence);
+    int updateEmptyServerNodeSequence(String emptyNode, ServerNodeSequence serverNodeSequence);
 
     ServerNodeSequence getServerNodeSequence(String node);
 
-    List<ServerNodeSequence> listServerNodeSequence();
+    List<ServerNodeSequence> listServerNodeSequence(String emptyNode, int size);
 
-    List<ServerNodeSequence> listEmptyServerNodeSequence(String emptyNodeValue, int size);
+    List<ServerNodeSequence> listEmptyServerNodeSequence(String emptyNode, int size);
 
 }

@@ -24,10 +24,6 @@ spring:
     maxOpenPreparedStatements: 20
     connection-init-sqls: SET NAMES utf8mb4
 
-log4j2:
-  asyncLoggerRingBufferSize: 262144
-  asyncQueueFullPolicy: Discard
-
 mybatis:
   mapperLocations: classpath*:*Mapper.xml
 

@@ -22,7 +22,6 @@ public class ServerNodeSequenceManagerImpl implements ServerNodeSequenceManager 
     @Autowired
     private ServerNodeSequenceDao serverNodeSequenceDao;
 
-
     @Override
     public void saveAllServerNodeSequence(Collection<ServerNodeSequence> serverNodeSequenceCollection) {
         if(CollectionUtils.isEmpty(serverNodeSequenceCollection)) {
@@ -38,9 +37,9 @@ public class ServerNodeSequenceManagerImpl implements ServerNodeSequenceManager 
     }
 
     @Override
-    public int updateEmptyServerNodeSequence(String emptyNodeValue, ServerNodeSequence serverNodeSequence) {
+    public int updateEmptyServerNodeSequence(String emptyNode, ServerNodeSequence serverNodeSequence) {
         return serverNodeSequenceDao.updateEmptyServerNodeSequence(serverNodeSequence.getId(),
-                emptyNodeValue, serverNodeSequence.getNode());
+                emptyNode, serverNodeSequence.getNode());
     }
 
     @Override
@@ -50,15 +49,16 @@ public class ServerNodeSequenceManagerImpl implements ServerNodeSequenceManager 
     }
 
     @Override
-    public List<ServerNodeSequence> listServerNodeSequence() {
-        List<ServerNodeSequencePO> serverNodeSequencePOList = serverNodeSequenceDao.listServerNodeSequence();
+    public List<ServerNodeSequence> listServerNodeSequence(String emptyNode, int size) {
+        List<ServerNodeSequencePO> serverNodeSequencePOList
+                = serverNodeSequenceDao.listServerNodeSequence(emptyNode, size);
         return ServerNodeSequenceConverter.fromPO(serverNodeSequencePOList);
     }
 
     @Override
-    public List<ServerNodeSequence> listEmptyServerNodeSequence(String emptyNodeValue, int size) {
+    public List<ServerNodeSequence> listEmptyServerNodeSequence(String emptyNode, int size) {
         List<ServerNodeSequencePO> serverNodeSequencePOList
-                = serverNodeSequenceDao.listEmptyServerNodeSequence(emptyNodeValue, size);
+                = serverNodeSequenceDao.listEmptyServerNodeSequence(emptyNode, size);
         return ServerNodeSequenceConverter.fromPO(serverNodeSequencePOList);
     }
 }

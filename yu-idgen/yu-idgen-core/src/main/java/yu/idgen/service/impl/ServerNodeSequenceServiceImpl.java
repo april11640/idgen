@@ -3,6 +3,7 @@ package yu.idgen.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import yu.idgen.domain.IdGenerationConfig;
 import yu.idgen.domain.ServerNodeSequence;
 import yu.idgen.manager.api.ServerNodeSequenceManager;
 import yu.idgen.service.api.ServerNodeSequenceService;
@@ -18,12 +19,14 @@ import static yu.idgen.domain.ServerNodeSequence.EMPTY_NODE_VALUE;
 @Service
 public class ServerNodeSequenceServiceImpl implements ServerNodeSequenceService {
 
-    private final int MAX_SIZE = 1024;
     private final int FETCH_SIZE = Runtime.getRuntime().availableProcessors() * 2;
     private final SecureRandom random = new SecureRandom();
 
     @Autowired
     private ServerNodeSequenceManager serverNodeSequenceManager;
+
+    @Autowired(required = false)
+    private IdGenerationConfig idGenerationConfig;
 
     @Override
     public void initServerNodeSequence(Collection<String> nodeCollection) {
@@ -31,7 +34,8 @@ public class ServerNodeSequenceServiceImpl implements ServerNodeSequenceService 
         ServerNodeSequence serverNodeSequence;
         int size = CollectionUtils.isEmpty(nodeCollection) ? 0 : nodeCollection.size();
         if (size > 0) {
-            Iterator<String> it = nodeCollection.iterator();
+            Set<String> nodeSet = new HashSet<>(nodeCollection);
+            Iterator<String> it = nodeSet.iterator();
             for (int i = 0; i < size; i++) {
                 serverNodeSequence = new ServerNodeSequence();
                 serverNodeSequence.setId(i);
@@ -39,7 +43,10 @@ public class ServerNodeSequenceServiceImpl implements ServerNodeSequenceService 
                 serverNodeSequenceList.add(serverNodeSequence);
             }
         }
-        for (int i = size; i < MAX_SIZE; i++) {
+        int maxSize =(idGenerationConfig == null)
+                ? 1 << IdGenerationConfig.DEFAULT_SERVER_NODE_SEQUENCE_BITS
+                : 1 << idGenerationConfig.getServerNodeSequenceBits();
+        for (int i = size; i < maxSize; i++) {
             serverNodeSequence = new ServerNodeSequence();
             serverNodeSequence.setId(i);
             serverNodeSequence.setNode(EMPTY_NODE_VALUE);
@@ -125,7 +132,9 @@ public class ServerNodeSequenceServiceImpl implements ServerNodeSequenceService 
     }
 
     @Override
-    public List<ServerNodeSequence> listServerNodeSequence() {
-        return serverNodeSequenceManager.listServerNodeSequence();
+    public List<ServerNodeSequence> listServerNodeSequence(boolean allocatedOnly, int size) {
+        return serverNodeSequenceManager.listServerNodeSequence(
+                allocatedOnly ? EMPTY_NODE_VALUE : null,
+                size);
     }
 }

@@ -38,6 +38,13 @@
             id,
             node
         FROM server_node_seq
+        <where>
+            <if test="param1 != null">
+                node != #{param1}
+            </if>
+        </where>
+        ORDER BY id
+        LIMIT #{param2}
     </select>
 
     <select id="listEmptyServerNodeSequence" resultType="yu.idgen.domain.po.ServerNodeSequencePO">
