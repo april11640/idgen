@@ -8,6 +8,7 @@ public class IdGenerationConfig {
     public final static int DEFAULT_TIMESTAMP_BITS = 41;
     public final static int DEFAULT_SERVER_NODE_SEQUENCE_BITS = 10;
     public final static int DEFAULT_INCREMENT_BITS = 12;
+    public final static long DEFAULT_TIMESTAMP_OFFSET = 0L;
 
     /**
      * 时间戳位数
@@ -21,6 +22,10 @@ public class IdGenerationConfig {
      * 自增序列号位数
      */
     private int incrementBits = DEFAULT_INCREMENT_BITS;
+    /**
+     * 时间戳的偏移量
+     */
+    private long timestampOffset = DEFAULT_TIMESTAMP_OFFSET;
 
     public int getTimestampBits() {
         return timestampBits;
@@ -46,4 +51,11 @@ public class IdGenerationConfig {
         this.incrementBits = incrementBits;
     }
 
+    public long getTimestampOffset() {
+        return timestampOffset;
+    }
+
+    public void setTimestampOffset(long timestampOffset) {
+        this.timestampOffset = timestampOffset;
+    }
 }

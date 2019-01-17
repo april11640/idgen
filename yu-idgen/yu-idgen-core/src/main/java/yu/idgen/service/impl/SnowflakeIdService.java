@@ -28,10 +28,14 @@ public class SnowflakeIdService implements IdService, InitializingBean {
 
     private final ReentrantLock lock = new ReentrantLock();
 
-    private volatile long applicationSequence = -1;
+    private volatile long nodeSequence = -1;
     private volatile long currentMillis = 0;
     private volatile long incr;
     private String ip;
+    private int incrementCapacity;
+    private int nodeSequenceShift;
+    private int timestampShift;
+    private long timestampOffset;
 
     @Value("${server.port}")
     private Integer serverPort;
@@ -51,16 +55,27 @@ public class SnowflakeIdService implements IdService, InitializingBean {
         ServerNodeSequence serverNodeSequence
                 = serverNodeSequenceService.getServerNodeSequenceByIpAndPort(ip, serverPort);
         if(serverNodeSequence != null) {
-            applicationSequence = serverNodeSequence.getId();
+            nodeSequence = serverNodeSequence.getId();
             if(logger.isInfoEnabled()) {
-                logger.info("服务节点" + ip + ":" + serverPort +"的序列号为：" + applicationSequence);
+                logger.info("服务节点" + ip + ":" + serverPort +"的序列号为：" + nodeSequence);
             }
         }
+        int incrementBits;
+        if(idGenerationConfig != null) {
+            nodeSequenceShift = incrementBits = idGenerationConfig.getIncrementBits();
+            timestampShift = nodeSequenceShift + idGenerationConfig.getServerNodeSequenceBits();
+            timestampOffset = idGenerationConfig.getTimestampOffset();
+        } else {
+            nodeSequenceShift = incrementBits = IdGenerationConfig.DEFAULT_INCREMENT_BITS;
+            timestampShift = nodeSequenceShift + IdGenerationConfig.DEFAULT_SERVER_NODE_SEQUENCE_BITS;
+            timestampOffset = IdGenerationConfig.DEFAULT_TIMESTAMP_OFFSET;
+        }
+        incrementCapacity = 1 << incrementBits;
     }
 
     @Override
     public Long generateId() {
-        if(applicationSequence == -1) {
+        if(nodeSequence == -1) {
             initSequence();
         }
         try{
@@ -72,7 +87,7 @@ public class SnowflakeIdService implements IdService, InitializingBean {
                 currentMillis = millis;
                 incr = 0;
             }
-            if (incr >= 0x0FFF) {
+            if (incr >= incrementCapacity) {
                 incr = 0;
                 //如果当前自增数已达最大值，则归零；判断最新毫秒数，是否已流逝到下一毫秒，否则线程自旋等待时间的流逝
                 long m = currentMillis;
@@ -84,8 +99,8 @@ public class SnowflakeIdService implements IdService, InitializingBean {
                 millis = latestMillis;
                 currentMillis = millis;
             }
-            //41位时间戳 + 10位机器序号 + 12位自增序列
-            return ((millis - 0) << 22) | (applicationSequence << 12) | incr++;
+            //时间戳 + 机器序号 + 自增序列
+            return ((millis - timestampOffset) << timestampShift) | (nodeSequence << nodeSequenceShift) | incr++;
         } finally {
             lock.unlock();
         }
@@ -106,14 +121,14 @@ public class SnowflakeIdService implements IdService, InitializingBean {
     private void initSequence() {
         try {
             lock.lock();
-            if(applicationSequence == -1) {
+            if(nodeSequence == -1) {
                 ServerNodeSequence serverNodeSequence
                         = serverNodeSequenceService.getOrUpdateEmptyServerNodeSequenceByIpAndPort(ip, serverPort);
                 int sequence = serverNodeSequence.getId();
                 if(logger.isInfoEnabled()) {
                     logger.info("初始化服务节点" + serverNodeSequence.getNode() + "的序列号为：" + sequence);
                 }
-                applicationSequence = sequence;
+                nodeSequence = sequence;
             }
         } finally {
             lock.unlock();
