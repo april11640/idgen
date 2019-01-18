@@ -9,6 +9,7 @@ public class IdGenerationConfig {
     public final static int DEFAULT_SERVER_NODE_SEQUENCE_BITS = 10;
     public final static int DEFAULT_INCREMENT_BITS = 12;
     public final static long DEFAULT_TIMESTAMP_OFFSET = 0L;
+    public final static float DEFAULT_EMPTY_NODE_FETCH_FACTOR = 2.0f;
 
     /**
      * 时间戳位数
@@ -26,6 +27,10 @@ public class IdGenerationConfig {
      * 时间戳的偏移量
      */
     private long timestampOffset = DEFAULT_TIMESTAMP_OFFSET;
+    /**
+     * 调节获取空节点记录个数的因子
+     */
+    private float emptyNodeFetchFactor = DEFAULT_EMPTY_NODE_FETCH_FACTOR;
 
     public int getTimestampBits() {
         return timestampBits;
@@ -57,5 +62,13 @@ public class IdGenerationConfig {
 
     public void setTimestampOffset(long timestampOffset) {
         this.timestampOffset = timestampOffset;
+    }
+
+    public float getEmptyNodeFetchFactor() {
+        return emptyNodeFetchFactor;
+    }
+
+    public void setEmptyNodeFetchFactor(float emptyNodeFetchFactor) {
+        this.emptyNodeFetchFactor = emptyNodeFetchFactor;
     }
 }

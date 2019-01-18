@@ -7,8 +7,19 @@ import java.util.List;
  */
 public interface IdService {
 
+    /**
+     * 获取id
+     *
+     * @return
+     */
     Long generateId();
 
+    /**
+     * 获取id
+     *
+     * @param size
+     * @return
+     */
     List<Long> generateId(int size);
 
 }

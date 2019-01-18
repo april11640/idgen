@@ -1,9 +1,11 @@
 package yu.idgen.service.impl;
 
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import yu.idgen.domain.IdGenerationConfig;
+import yu.idgen.domain.IdGenerationException;
 import yu.idgen.domain.ServerNodeSequence;
 import yu.idgen.manager.api.ServerNodeSequenceManager;
 import yu.idgen.service.api.ServerNodeSequenceService;
@@ -17,9 +19,9 @@ import static yu.idgen.domain.ServerNodeSequence.EMPTY_NODE_VALUE;
  * Created by zsp on 2019/1/16.
  */
 @Service
-public class ServerNodeSequenceServiceImpl implements ServerNodeSequenceService {
+public class ServerNodeSequenceServiceImpl implements ServerNodeSequenceService, InitializingBean {
 
-    private final int FETCH_SIZE = Runtime.getRuntime().availableProcessors() * 2;
+    private int fetchSize;
     private final SecureRandom random = new SecureRandom();
 
     @Autowired
@@ -27,6 +29,17 @@ public class ServerNodeSequenceServiceImpl implements ServerNodeSequenceService 
 
     @Autowired(required = false)
     private IdGenerationConfig idGenerationConfig;
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        float factor;
+        if(idGenerationConfig == null) {
+            factor = IdGenerationConfig.DEFAULT_EMPTY_NODE_FETCH_FACTOR;
+        } else {
+            factor = idGenerationConfig.getEmptyNodeFetchFactor();
+        }
+        fetchSize = Math.round(Runtime.getRuntime().availableProcessors() * factor);
+    }
 
     @Override
     public void initServerNodeSequence(Collection<String> nodeCollection) {
@@ -80,7 +93,7 @@ public class ServerNodeSequenceServiceImpl implements ServerNodeSequenceService 
             Set<Integer> indexSet = new HashSet<>();
             Outter: for(int i = 0; i < 3; i++) {
                 emptyServerNodeSequenceList = serverNodeSequenceManager.listEmptyServerNodeSequence(
-                        EMPTY_NODE_VALUE, FETCH_SIZE);
+                        EMPTY_NODE_VALUE, fetchSize);
                 for (int j = 0; j < 3; j++) {
                     do {
                         index = random.nextInt(emptyServerNodeSequenceList.size() + 1) - 1;
@@ -100,7 +113,7 @@ public class ServerNodeSequenceServiceImpl implements ServerNodeSequenceService 
                 indexSet.clear();
             }
             if(affectedRows < 1) {
-                throw new IllegalStateException("抢占服务节点序号失败");
+                throw new IdGenerationException("抢占服务节点序号失败");
             }
         }
         return serverNodeSequence;
@@ -137,4 +150,5 @@ public class ServerNodeSequenceServiceImpl implements ServerNodeSequenceService 
                 allocatedOnly ? EMPTY_NODE_VALUE : null,
                 size);
     }
+
 }
